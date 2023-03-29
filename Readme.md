@@ -1,5 +1,8 @@
 Projeto de integração de Pyhton com CLP Siemens
 
+Como usar a biblioteca Snap 7
+
+
 Source code for snap7.util
 """
 This module contains utility functions for working with PLC DB objects.
