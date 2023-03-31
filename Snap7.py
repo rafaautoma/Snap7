@@ -46,11 +46,34 @@ def ReadMemory(plc,byte,bit,datatype,area1,comeco):
 #     else:
 #         return None
 
+def WriteMemory(plc, byte, bit, datatype, area1, comeco, value):
+    if datatype == S7WLBit:
+        current_value = plc.read_area(area1, comeco, byte, datatype)   
+        set_bool(current_value, 0, bit, value)
+        plc.write_area(area1, comeco, byte, current_value, datatype)
+    elif datatype == S7WLByte:
+        plc.write_area(area1, comeco, bytearray(struct.pack('>b', value)), datatype)
+    elif datatype == S7WLWord:
+        plc.write_area(area1, comeco, bytearray(struct.pack('>h', value)), datatype)
+    elif datatype == S7WLReal:
+        plc.write_area(area1, comeco, bytearray(struct.pack('>f', value)), datatype)
+    elif datatype == S7WLDWord:
+        plc.write_area(area1, comeco, bytearray(struct.pack('>i', value)), datatype)
+    else:
+        raise ValueError('Datatype not supported')
+
+   
+
+
+
 if __name__=="__main__":
     plc = c.Client()
     plc.connect('192.168.0.1',0,1,102)
     while(True):
         os.system('cls')
+        
+        WriteMemory(plc,14,0,S7WLDWord,Areas.DB,120, 15)
+
         # Ler Memorias (MK)
         # var = ReadMemory(plc,byte,bit,datatype,Areas.MK,0)
         a = ReadMemory(plc,0,0,S7WLBit,Areas.MK,0) # M0.0
@@ -74,7 +97,8 @@ if __name__=="__main__":
         m = ReadMemory(plc,0,2,S7WLBit,Areas.DB,120) #DB120.DBX0.2
         n = ReadMemory(plc,8,0,S7WLWord,Areas.DB,120) #DB120.DBW8
         o = ReadMemory(plc,10,0,S7WLWord,Areas.DB,120) #DB120.DBW10
-        
+
+   
 
         #Mostra a data e a hora
         now = datetime.now()
