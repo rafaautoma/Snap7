@@ -48,32 +48,32 @@ def ReadMemory(plc,byte,bit,datatype,area1,comeco):
 
 if __name__=="__main__":
     plc = c.Client()
-    plc.connect('192.168.0.11',0,1,102)
+    plc.connect('192.168.0.1',0,1,102)
     while(True):
         os.system('cls')
         # Ler Memorias (MK)
         # var = ReadMemory(plc,byte,bit,datatype,Areas.MK,0)
-        a = ReadMemory(plc,0,0,S7WLBit,Areas.MK,0)
-        b = ReadMemory(plc,0,1,S7WLBit,Areas.MK,0)
-        c = ReadMemory(plc,0,2,S7WLBit,Areas.MK,0)
-        d = ReadMemory(plc,10,0,S7WLByte,Areas.MK,0)
-        e = ReadMemory(plc,14,0,S7WLWord,Areas.MK,0)
-        f = ReadMemory(plc,16,0,S7WLDWord,Areas.MK,0)
-        g = ReadMemory(plc,20,0,S7WLReal,Areas.MK,0)
+        a = ReadMemory(plc,0,0,S7WLBit,Areas.MK,0) # M0.0
+        b = ReadMemory(plc,0,1,S7WLBit,Areas.MK,0) #M0.1
+        c = ReadMemory(plc,0,2,S7WLBit,Areas.MK,0) #M0.2
+        d = ReadMemory(plc,10,0,S7WLByte,Areas.MK,0) #MB10
+        e = ReadMemory(plc,14,0,S7WLWord,Areas.MK,0) #MW14
+        f = ReadMemory(plc,16,0,S7WLDWord,Areas.MK,0) #MD16
+        g = ReadMemory(plc,20,0,S7WLReal,Areas.MK,0) #MD20
         # Ler Inputs (PE)
         # var = ReadMemory(plc,byte,bit,datatype,Areas.PE,0)
-        h = ReadMemory(plc,0,0,S7WLBit,Areas.PE,0)
-        i = ReadMemory(plc,0,1,S7WLBit,Areas.PE,0)
+        h = ReadMemory(plc,0,0,S7WLBit,Areas.PE,0) #I0.0
+        i = ReadMemory(plc,0,1,S7WLBit,Areas.PE,0) #I0.1
         # Ler Outputs (PA)
-        # var = ReadMemory(plc,byte,bit,datatype,Areas.PA,0)
+        # var = ReadMemory(plc,byte,bit,datatype,Areas.PA,0) #Q0.0
         j = ReadMemory(plc,0,0,S7WLBit,Areas.PA,0)
         # Ler DB (DB)
         # var = ReadMemory(plc,byte,bit,datatype,Areas.MK,numero da db que quero ler)
-        k = ReadMemory(plc,0,0,S7WLBit,Areas.DB,120)
-        l = ReadMemory(plc,0,1,S7WLBit,Areas.DB,120)
-        m = ReadMemory(plc,0,2,S7WLBit,Areas.DB,120)
-        n = ReadMemory(plc,8,0,S7WLWord,Areas.DB,120)
-        o = ReadMemory(plc,10,0,S7WLWord,Areas.DB,120)
+        k = ReadMemory(plc,0,0,S7WLBit,Areas.DB,120) #DB120.DBX0.0
+        l = ReadMemory(plc,0,1,S7WLBit,Areas.DB,120) #DB120.DBX0.1
+        m = ReadMemory(plc,0,2,S7WLBit,Areas.DB,120) #DB120.DBX0.2
+        n = ReadMemory(plc,8,0,S7WLWord,Areas.DB,120) #DB120.DBW8
+        o = ReadMemory(plc,10,0,S7WLWord,Areas.DB,120) #DB120.DBW10
         
 
         #Mostra a data e a hora
