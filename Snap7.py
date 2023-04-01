@@ -72,7 +72,7 @@ if __name__=="__main__":
     while(True):
         os.system('cls')
         
-        WriteMemory(plc,14,0,S7WLDWord,Areas.DB,120, 15)
+        WriteMemory(plc,28,0,S7WLDWord,Areas.DB,120, 15)
 
         # Ler Memorias (MK)
         # var = ReadMemory(plc,byte,bit,datatype,Areas.MK,0)

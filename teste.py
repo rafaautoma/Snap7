@@ -1,50 +1,57 @@
-import snap7.client as c
-from snap7.util import *
-from snap7.types import *
-import time
-from datetime import datetime
-import os
+"""
+Functions writeBool and readBool are based on:
+	https://github.com/gijzelaerr/python-snap7/blob/master/example/boolean.py
+	the minimum amount of data being read or written to a plc is 1 byte
 
-def ReadMemory(plc,byte,bit,datatype,area1,comeco):
-    result = plc.read_area(area1,comeco,byte,datatype)
-    if datatype==S7WLBit:
-        return get_bool(result,0,bit)
-    elif datatype==S7WLByte:
-        return get_sint(result,0)
-    elif datatype==S7WLWord:
-        return get_int(result,0)
-    elif datatype==S7WLReal:
-        return get_real(result,0)
-    elif datatype==S7WLDWord:
-        return get_dint(result,0)
-    else:
-        return None
-import array
+Functions readMemory and writeMemory are based on:
+	https://buildmedia.readthedocs.org/media/pdf/python-snap7/latest/python-snap7.pdf
+	Python snap7 documentation
+
+General Constraints:
+	get/put get has to be enabled
+	virtual adapter from plc sim advanced has to be used
+	DB cannot be optimized
+
+"""
+
+import snap7
 import struct
 
-def WriteMemory(plc, byte, bit, datatype, area1, start, value):
-    if datatype == S7WLBit:
-        current_value = plc.read_area(area1, start, byte, datatype)
-        set_bool(current_value, 0, bit, value)
-        plc.write_area(area1, start, byte, current_value, datatype)
-    elif datatype == S7WLByte:
-        plc.write_area(area1, start, bytearray(struct.pack('>b', value)), datatype)
-    elif datatype == S7WLWord:
-        plc.write_area(area1, start, bytearray(struct.pack('>h', value)), datatype)
-    elif datatype == S7WLReal:
-        plc.write_area(area1, start, bytearray(struct.pack('>f', value)), datatype)
-    elif datatype == S7WLDWord:
-        plc.write_area(area1, start, bytearray(struct.pack('>i', value)), datatype)
-    else:
-        raise ValueError('Datatype not supported')
+plc = snap7.client.Client()
+plc.connect('192.168.0.1', 0, 1)  # IP address, rack, slot (from HW settings)
 
-if __name__=="__main__":
-    plc = c.Client()
-    plc.connect('192.168.0.1',0,1,102)
-    while(True):
-        os.system('cls')
+db_number = 2
+start_offset = 0
+bit_offset = 0
+value = 1  # 1 = true | 0 = false
 
-        # Write value 1234 to address 100 in the DB1 area
-        WriteMemory(plc, 14, 0, S7WLWord, Areas.DB, 120, 1234)
+start_address = 100  # starting address
+length = 4  # double word
 
-        time.sleep(1)
+def writeBool(db_number, start_offset, bit_offset, value):
+	reading = plc.db_read(db_number, start_offset, 1)    # (db number, start offset, read 1 byte)
+	snap7.util.set_bool(reading, 0, bit_offset, value)   # (value 1= true;0=false) (bytearray_: bytearray, byte_index: int, bool_index: int, value: bool)
+	plc.db_write(db_number, start_offset, reading)       #  write back the bytearray and now the boolean value is changed in the PLC.
+	return None
+
+def readBool(db_number, start_offset, bit_offset):
+	reading = plc.db_read(db_number, start_offset, 1)  
+	a = snap7.util.get_bool(reading, 0, bit_offset)
+	print('DB Number: ' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
+	return None
+
+def readMemory(start_address,length):
+	reading = plc.read_area(snap7.types.Areas.MK, 0, start_address, length)
+	value = struct.unpack('>f', reading)  # big-endian
+	print('Start Address: ' + str(start_address) + ' Value: ' + str(value))
+
+def writeMemory(start_address,length,value):
+	plc.mb_write(start_address, length, bytearray(struct.pack('>f', value)))  # big-endian
+	print('Start Address: ' + str(start_address) + ' Value: ' + str(value))
+
+# writeBool(db_number, start_offset, bit_offset, value)
+#
+# readBool(db_number, start_offset, bit_offset)
+
+writeMemory(start_address, length, 786.78)
+# readMemory(start_address, length)
